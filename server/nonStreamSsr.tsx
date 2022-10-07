@@ -25,6 +25,8 @@ export default async function nonStreamSsr(req, res) {
 
   // fake fetching data
   const data = createServerData();
+  // fake delay preload here.
+  await data.preload();
 
   // Render the component to a string.
   const html = ReactDOMServer.renderToString(

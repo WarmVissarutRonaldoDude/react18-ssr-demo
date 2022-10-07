@@ -35,6 +35,22 @@ export const createServerData = () => {
   let done = false;
   let promise = null;
   return {
+    preload() {
+      console.log("PRELOAD DATA ");
+      if (done) {
+        return Promise.resolve();
+      }
+
+      if (!promise) {
+        const onDone = () => {
+          done = true;
+          promise = null;
+        };
+
+        promise = fakeFetch(onDone);
+      }
+      return promise;
+    },
     read() {
       console.log("START READ DATA ", done);
       if (done) {
