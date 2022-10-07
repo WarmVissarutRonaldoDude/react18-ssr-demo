@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import App from "../src/App";
+import { DataProvider, createServerData } from "../src/dataLoader";
 
 function renderFullPage(html) {
   return `
@@ -22,13 +23,17 @@ function renderFullPage(html) {
 export default async function nonStreamSsr(req, res) {
   console.log("NON_STREAM SSR");
 
-  if (App.loadAllData) {
-    await App.loadAllData();
-  }
+  // fake fetching data
+  const data = createServerData();
 
   // Render the component to a string.
-  const html = ReactDOMServer.renderToString(<App />);
+  const html = ReactDOMServer.renderToString(
+    <DataProvider data={data}>
+      <App />
+    </DataProvider>
+  );
 
   // Send the rendered page back to the client.
+  // NOTE: Suspense will not work properly here, require `renderToPipeableStream` for SSR.
   res.send(renderFullPage(html));
 }

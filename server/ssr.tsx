@@ -4,6 +4,7 @@ import { renderToPipeableStream } from "react-dom/server";
 
 import App from "../src/App";
 import { Writable } from "node:stream";
+import { DataProvider, createServerData } from "../src/dataLoader";
 
 const frontHTML = `
 <!DOCTYPE HTML>
@@ -17,33 +18,41 @@ const frontHTML = `
 const backHtml = "</div></body></html>";
 
 const render: RequestHandler = (req, res, next) => {
+  // fake fetching data
+  const data = createServerData();
+
   // SSR Stream rendering
   const stream = new Writable({
     write(chunk, _encoding, cb) {
       res.write(chunk, cb);
     },
     final() {
-      console.log("END STREAM")
+      console.log("END STREAM");
       res.end(backHtml);
     },
   });
-  const { pipe } = renderToPipeableStream(<App />, {
-    onShellReady() {
-      console.log("shell ready");
-      // Set headers for streaming
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
+  const { pipe } = renderToPipeableStream(
+    <DataProvider data={data}>
+      <App />
+    </DataProvider>,
+    {
+      onShellReady() {
+        console.log("shell ready");
+        // Set headers for streaming
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
 
-      // Write front HTML
-      res.write(frontHTML);
-      pipe(stream);
-    },
-    onAllReady() {
-      console.log("all ready");
-    },
-    onError(x) {
-      console.error(x);
-    },
-  });
+        // Write front HTML
+        res.write(frontHTML);
+        pipe(stream);
+      },
+      onAllReady() {
+        console.log("all ready");
+      },
+      onError(x) {
+        console.error(x);
+      },
+    }
+  );
 };
 
 export default render;

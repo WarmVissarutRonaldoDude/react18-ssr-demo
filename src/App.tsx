@@ -18,19 +18,11 @@ export default function App() {
           mt: "2rem",
         }}
       >
+        {/* Selective Hydration */}
         <Suspense fallback={<DemoTableLoading />}>
           <DemoTable />
         </Suspense>
       </Container>
     </div>
   );
-}
-
-App.loadAllData = async () => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      console.log('APP FAKE LOAD DATA')
-      resolve(true);
-    }, 5000)
-  })
 }
