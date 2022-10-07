@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, lazy } from "react";
+import Container from "@mui/material/Container";
+import Skeleton from "@mui/material/Skeleton";
+import DemoAppBar from "./AppBar";
 
-function App() {
+const DemoTable = lazy(() => import("./Table"));
+
+const DemoTableLoading = () => {
+  return <Skeleton variant="rectangular" width="100%" height="400px" />;
+};
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <DemoAppBar />
+      <Container
+        sx={{
+          mt: "2rem",
+        }}
+      >
+        <Suspense fallback={<DemoTableLoading />}>
+          <DemoTable />
+        </Suspense>
+      </Container>
     </div>
   );
 }
 
-export default App;
+App.loadAllData = async () => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      console.log('APP FAKE LOAD DATA')
+      resolve(true);
+    }, 5000)
+  })
+}
