@@ -31,6 +31,8 @@ const render: RequestHandler = (req, res, next) => {
       res.end(backHtml);
     },
   });
+
+  // https://reactjs.org/docs/react-dom-server.html#rendertopipeablestream
   const { pipe } = renderToPipeableStream(
     <DataProvider data={data}>
       <App />
