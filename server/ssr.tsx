@@ -6,7 +6,7 @@ import App from "../src/App";
 import { Writable } from "node:stream";
 import { DataProvider, createServerData } from "../src/dataLoader";
 
-const frontHTML = `
+const startHtml = `
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -15,7 +15,7 @@ const frontHTML = `
 <body>
 <div id="root">`;
 
-const backHtml = "</div></body></html>";
+const closeHtml = "</div></body></html>";
 
 const render: RequestHandler = (req, res, next) => {
   // fake fetching data
@@ -24,11 +24,12 @@ const render: RequestHandler = (req, res, next) => {
   // SSR Stream rendering
   const stream = new Writable({
     write(chunk, _encoding, cb) {
-      res.write(chunk, cb);
+      console.log("WRITE CHUNK");
+      res.write(chunk, cb); // write chunk to response
     },
     final() {
       console.log("END STREAM");
-      res.end(backHtml);
+      res.end(closeHtml); // write close html to response
     },
   });
 
@@ -40,11 +41,11 @@ const render: RequestHandler = (req, res, next) => {
     {
       onShellReady() {
         console.log("shell ready");
+
         // Set headers for streaming
         res.setHeader("Content-Type", "text/html; charset=utf-8");
 
-        // Write front HTML
-        res.write(frontHTML);
+        res.write(startHtml); // write start HTML
         pipe(stream);
       },
       onAllReady() {
