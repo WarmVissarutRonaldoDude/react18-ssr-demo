@@ -16,4 +16,6 @@ app.use(router);
 
 app.listen(8000, () => {
   console.log(`Listen on port: ${8000}`);
+  console.log("For non stream example : localhost:8000/non-stream");
+  console.log("For stream example : localhost:8000/ssr-stream");
 });

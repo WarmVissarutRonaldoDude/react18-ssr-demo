@@ -30,6 +30,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "dev": "yarn build && yarn start",
     "start": "node dist/server/server.js",
     "build": "yarn build:server && yarn build:client",
     "build:server": "tsc",
